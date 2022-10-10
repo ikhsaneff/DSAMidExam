@@ -6,7 +6,7 @@ using namespace std;
 int main () {
 
     string inputEquation;
-    float result;
+    string result;
 
     cout << "Enter the equation: ";
     cin >> inputEquation;
