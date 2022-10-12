@@ -10,6 +10,7 @@ int main () {
 
     cout << "Enter the equation: ";
     getline(cin, inputEquation);
-    cout << "Result: " << calc.calculate(inputEquation);  
+    // cout << "Result: " << calc.calculate(inputEquation);
+    cout << "Result: "; calc.printConversion(inputEquation);  
 
 }

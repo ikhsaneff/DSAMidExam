@@ -15,11 +15,17 @@ public:
     void toStringQueue(string inputEquation);
     double finalResult;
     double calculate(string inputEquation);
+    void printConversion(string inputEquation);
+    void bracketDetect(queue<string> equationQueue);
 };
+
+void Calculator::bracketDetect(queue<string> equationQueue) {
+    
+} 
 
 void Calculator::toStringQueue(string inputEquation) {
     
-    string tempNum = "";
+    string tempNum = "", tempSymbol = "";
 
     while (!inputEquation.empty()) {
         if (inputEquation.front() == ' ' || inputEquation.front() == '+') {
@@ -27,25 +33,48 @@ void Calculator::toStringQueue(string inputEquation) {
         } else if (isdigit(inputEquation.front()) || inputEquation.front() == '-') {
             tempNum += inputEquation.front();
             inputEquation.erase (inputEquation.begin());
+        } else if (inputEquation.front() == '('){
+            tempSymbol += inputEquation.front();
+            equationQueue.push(tempSymbol);
+            inputEquation.erase (inputEquation.begin());
+            tempSymbol = "";
         }
 
         if (inputEquation.front() == '-' || inputEquation.front() == '+' || inputEquation.empty()) {
             equationQueue.push(tempNum);
             tempNum = "";
+        } else if (inputEquation.front() == ')') {
+            equationQueue.push(tempNum);
+            tempNum = "";
+            tempSymbol += inputEquation.front();
+            equationQueue.push(tempSymbol);
+            inputEquation.erase (inputEquation.begin());
+            tempSymbol = "";
         }
     }
 }
 
-double Calculator::calculate(string inputEquation) {
-
+// For testing purpose
+void Calculator::printConversion(string inputEquation) {
+    
     toStringQueue(inputEquation);
-
+    
     while (!equationQueue.empty()) {
-        finalResult += stod(equationQueue.front());
+        cout << equationQueue.front() << " ";
         equationQueue.pop();
     }
-
-    return finalResult;
 }
+
+// double Calculator::calculate(string inputEquation) {
+
+//     toStringQueue(inputEquation);
+
+//     while (!equationQueue.empty()) {
+//         finalResult += stod(equationQueue.front());
+//         equationQueue.pop();
+//     }
+
+//     return finalResult;
+// }
 
 #endif
