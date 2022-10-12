@@ -2,67 +2,47 @@
 #define CALCULATOR_H
 
 #include <iostream>
-#include <queue>
 #include <string>
+#include <vector>
+#include <queue>
 
 using namespace std;
 
 class Calculator {
-    public:
-        int index, end, digitCount1;
-        queue<char> firstResult;
-        queue<string> result;
-        string firstNum, secondNum;
-
-        double calcAll(string result);
-        queue<string> calculate(queue<char> equation);
-        queue<char> stringToCharQ(string equation);
-
+public:
+    string inputEquation;
+    queue<string> equationQueue;
+    void toStringQueue(string inputEquation);
+    double finalResult;
+    double calculate(string inputEquation);
 };
 
-queue<char> Calculator::stringToCharQ(string equation) {
+void Calculator::toStringQueue(string inputEquation) {
     
-    queue<char> equationChar;
-
-    for (int i = 0; i < equation.size(); i++) {
-        equationChar.push(equation[i]);
-    }
-    
-    return equationChar;
-} 
-
-queue<string> Calculator::calculate(queue<char> equation) {
-    
-    queue<char> tempNumQueue;
-    queue<string> result;
     string tempNum = "";
 
-    while (!equation.empty()) {
-        if (equation.front() == ' ' || equation.front() == '+') {
-            equation.pop();
-        } else if (isdigit(equation.front()) || equation.front() == '-') {
-            tempNum += equation.front();
-            equation.pop();
+    while (!inputEquation.empty()) {
+        if (inputEquation.front() == ' ' || inputEquation.front() == '+') {
+            inputEquation.erase (inputEquation.begin());
+        } else if (isdigit(inputEquation.front()) || inputEquation.front() == '-') {
+            tempNum += inputEquation.front();
+            inputEquation.erase (inputEquation.begin());
         }
 
-        if (equation.front() == '-' || equation.front() == '+' || equation.empty()) {
-            result.push(tempNum);
+        if (inputEquation.front() == '-' || inputEquation.front() == '+' || inputEquation.empty()) {
+            equationQueue.push(tempNum);
             tempNum = "";
         }
     }
-    
-    return result;
 }
 
-double Calculator::calcAll(string equation) {
-    
-    double finalResult;
+double Calculator::calculate(string inputEquation) {
 
-    queue<string> result = calculate(stringToCharQ(equation));
+    toStringQueue(inputEquation);
 
-    while (!result.empty()) {
-        finalResult += stod(result.front());
-        result.pop();
+    while (!equationQueue.empty()) {
+        finalResult += stod(equationQueue.front());
+        equationQueue.pop();
     }
 
     return finalResult;

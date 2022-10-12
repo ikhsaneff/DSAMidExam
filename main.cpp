@@ -1,9 +1,4 @@
-#include <iostream>
-#include <string>
-#include <queue>
-#include "Calculator.h"
-
-using namespace std;
+#include "calculator.h"
 
 int main () {
 
@@ -15,6 +10,6 @@ int main () {
 
     cout << "Enter the equation: ";
     getline(cin, inputEquation);
-    cout << "Result: " << calc.calcAll(inputEquation);  
+    cout << "Result: " << calc.calculate(inputEquation);  
 
 }
