@@ -1,6 +1,7 @@
 #include "calculator.h"
 
-int main () {
+int main()
+{
 
     Calculator calc;
     string inputEquation;
@@ -11,6 +12,6 @@ int main () {
     cout << "Enter the equation: ";
     getline(cin, inputEquation);
     // cout << "Result: " << calc.calculate(inputEquation);
-    cout << "Result: "; calc.printConversion(inputEquation);  
-
+    cout << "Result: ";
+    calc.printConversion(inputEquation);
 }
