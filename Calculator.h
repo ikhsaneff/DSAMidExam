@@ -14,16 +14,26 @@ class Calculator
 public:
     Calculator(string);
     void toStringQueue();
-    double finalResult;
     double calculate();
     void printConversion();
-    double calculateBracket();
-    void multiply(string);
+    bool isNumber(string);
 
 private:
     string inputEquation;
     queue<string> equationQueue;
 };
+
+bool isNumber(string toCheck)
+{
+    for (auto it = toCheck.begin(); it != toCheck.end(); ++it)
+    {
+        if (!isdigit(*it))
+        {
+            return false;
+        }
+    }
+    return true;
+}
 
 //@Definition: Default Constructor
 Calculator::Calculator(string inputEquation)
@@ -96,17 +106,33 @@ void Calculator::printConversion()
     }
 }
 
-// Calculate
+// Calculate bracket recursive
 double Calculator::calculate()
 {
+    double result;
     while (!equationQueue.empty())
     {
         string temp = equationQueue.front();
-        finalResult += stod(temp);
-        equationQueue.pop();
+        // case 1: finds an open bracket
+        if (temp == "(")
+        {
+            equationQueue.pop();
+            result += calculate();
+        }
+        // case 2: finds a close bracket
+        else if (temp == ")")
+        {
+            equationQueue.pop();
+            return result;
+        }
+        // base case: addition of number
+        else
+        {
+            equationQueue.pop();
+            result += stod(temp);
+        }
     }
-
-    return finalResult;
+    return result;
 }
 
 #endif
