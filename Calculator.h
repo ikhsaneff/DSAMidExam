@@ -5,117 +5,143 @@
 #include <string>
 #include <vector>
 #include <queue>
+#include <stdexcept>
 
 using namespace std;
 
 class Calculator
 {
 public:
+    Calculator(string);
+    void toStringQueue();
+    double calculate();
+    void printConversion();
+    bool isNumber(string);
+
+private:
     string inputEquation;
     queue<string> equationQueue;
-    void toStringQueue(string inputEquation);
-    double finalResult;
-    double calculate(string inputEquation);
-    void printConversion(string inputEquation);
-    void bracketDetect(queue<string> equationQueue);
 };
 
-void Calculator::bracketDetect(queue<string> equationQueue)
+bool isNumber(string toCheck)
 {
+    for (int i = 0; i < toCheck.size(); i++)
+    {
+        if (!isdigit(toCheck[i]))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+//@Definition: Default Constructor
+Calculator::Calculator(string inputEquation)
+{
+    this->inputEquation = inputEquation;
+    toStringQueue();
 }
 
 //@Definition:
-void Calculator::toStringQueue(string inputEquation)
+void Calculator::toStringQueue()
 {
 
-    string tempNum = "", tempSymbol = "";
+    string tempNum = "";
+    int decimal = 0, bracketed = 0;
 
     for (int i = 0; i < inputEquation.size(); i++)
     {
         char current_index = inputEquation[i];
-        if (isdigit(current_index) || current_index == '-')
+        if (bracketed == 0 && inputEquation[0] != '(')
         {
+            equationQueue.push("(");
+            bracketed++;
+        }
+
+        if (isdigit(current_index) || current_index == '-' || current_index == '/' || current_index == '*')
+        {
+            tempNum += current_index;
+        }
+        else if (current_index == '.')
+        {
+            decimal++;
             tempNum += current_index;
         }
         else if (current_index == '(')
         {
-            string temp(1, current_index);
-            equationQueue.push(temp);
+            equationQueue.push("(");
+            bracketed++;
         }
 
-        if (inputEquation[i + 1] == '-' || current_index == '+')
+        if (decimal > 1)
         {
-            equationQueue.push(tempNum);
-            tempNum = "";
+            throw invalid_argument("Invalid number, too many . in one number");
         }
-        else if (current_index == ')')
+
+        if (inputEquation[i + 1] == '-' || current_index == '+' || current_index == ')' || i + 1 == inputEquation.size())
         {
             equationQueue.push(tempNum);
             tempNum = "";
-            string temp(1, current_index);
-            equationQueue.push(temp);
+            decimal = 0;
+            if (current_index == ')' || i + 1 == inputEquation.size())
+            {
+                equationQueue.push(")");
+                bracketed--;
+            }
         }
     }
-
-    // while (!inputEquation.empty())
-    // { // Loops through string
-    //     if (inputEquation.front() == ' ' || inputEquation.front() == '+')
-    //     {
-    //         inputEquation.erase(inputEquation.begin());
-    //     }
-    //     else if (isdigit(inputEquation.front()) || inputEquation.front() == '-')
-    //     {
-    //         tempNum += inputEquation.front();
-    //         inputEquation.erase(inputEquation.begin());
-    //     }
-    //     else if (inputEquation.front() == '(')
-    //     {
-    //         tempSymbol += inputEquation.front();
-    //         equationQueue.push(tempSymbol);
-    //         inputEquation.erase(inputEquation.begin());
-    //         tempSymbol = "";
-    //     }
-
-    //     if (inputEquation.front() == '-' || inputEquation.front() == '+' || inputEquation.empty())
-    //     {
-    //         equationQueue.push(tempNum);
-    //         tempNum = "";
-    //     }
-    //     else if (inputEquation.front() == ')')
-    //     {
-    //         equationQueue.push(tempNum);
-    //         tempNum = "";
-    //         tempSymbol += inputEquation.front();
-    //         equationQueue.push(tempSymbol);
-    //         inputEquation.erase(inputEquation.begin());
-    //         tempSymbol = "";
-    //     }
-    // }
+    for (int i = 0; i < bracketed; i++)
+    {
+        equationQueue.push(")");
+    }
 }
 
 // For testing purpose
-void Calculator::printConversion(string inputEquation)
+void Calculator::printConversion()
 {
-
-    toStringQueue(inputEquation);
-
     while (!equationQueue.empty())
     {
+
         cout << equationQueue.front() << " ";
+        // if (!isNumber(equationQueue.front()))
+        // {
+        //     cout << equationQueue.front() << endl;
+        // }
         equationQueue.pop();
     }
 }
 
-// double Calculator::calculate(string inputEquation) {
-
-//     toStringQueue(inputEquation);
-
-//     while (!equationQueue.empty()) {
-//         finalResult += stod(equationQueue.front());
-//         equationQueue.pop();
-//     }
-
-//     return finalResult;
-// }
+// Calculate bracket recursive
+double Calculator::calculate()
+{
+    double result;
+    while (!equationQueue.empty())
+    {
+        string temp = equationQueue.front();
+        // case 1: finds an open bracket
+        if (temp == "(")
+        {
+            equationQueue.pop();
+            result += calculate();
+        }
+        // case 2: finds a close bracket
+        else if (temp == ")")
+        {
+            equationQueue.pop();
+            return result;
+        }
+        // base case: addition of number
+        else
+        {
+            equationQueue.pop();
+            // if (!isNumber(temp))
+            // {
+            //     cout << temp << endl;
+            // }
+            result += stod(temp);
+        }
+    }
+    return result;
+}
 
 #endif

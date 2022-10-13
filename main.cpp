@@ -4,8 +4,6 @@
 
 int main ()
 {
-
-    Calculator calc;
     string inputEquation;
     double result;
     int command;
@@ -34,8 +32,9 @@ int main ()
             cout << "Enter result: ";   // Remove this 
             cin >> test;                // after testing
             result = test; // input equation result after testing
-            // cout << "Result: "; calc.printConversion(inputEquation);
-            cout << "Result: " << test << endl;  
+            Calculator calculator(inputEquation);
+            cout << "Result: "; calculator.printConversion(inputEquation);
+            // cout << "Result: " << test << endl;  
 			
 			string calcResult = to_string(result);
 			tempHistory = inputEquation + " = " + calcResult;
