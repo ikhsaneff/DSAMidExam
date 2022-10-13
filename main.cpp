@@ -28,20 +28,15 @@ int main()
     //          << "Enter... ";
     //     cin >> prompt;
     //     system("cls");
-
-    //     // to do a calculation
-    //     if (prompt == 1)
-    //     {
-    //         cin.ignore();
-    //         cout << "Enter the equation: ";
-    //         cin >> inputEquation;
-    //         cout << "Enter result: "; // Remove this
-    //         cin >> test;              // after testing
-    //         result = test;            // input equation result after testing
-    //         Calculator calculator(inputEquation);
-    //         cout << "Result: ";
-    //         calculator.printConversion();
-    //         // cout << "Result: " << test << endl;
+        // to do a calculation
+        if (prompt == 1)
+        {
+             cin.ignore();
+            cout << "Enter the equation: ";
+            cin >> inputEquation;
+            Calculator calculator(inputEquation);
+            // result = calc.calculate(inputEquation); // input equation result after testing
+            cout << "Result: "; calculator.printConversion();
 
     //         string calcResult = to_string(result);
     //         tempHistory = inputEquation + " = " + calcResult;
