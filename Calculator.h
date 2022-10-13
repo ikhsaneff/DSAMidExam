@@ -52,7 +52,7 @@ void Calculator::toStringQueue()
     for (int i = 0; i < inputEquation.size(); i++)
     {
         char current_index = inputEquation[i];
-        if (bracketed == 0 && inputEquation[0] != '(')
+        if (bracketed == 0)
         {
             equationQueue.push("(");
             bracketed++;
@@ -80,9 +80,13 @@ void Calculator::toStringQueue()
 
         if (inputEquation[i + 1] == '-' || current_index == '+' || current_index == ')' || i + 1 == inputEquation.size())
         {
-            equationQueue.push(tempNum);
-            tempNum = "";
-            decimal = 0;
+            if (tempNum != "")
+            {
+                equationQueue.push(tempNum);
+                tempNum = "";
+                decimal = 0;
+            }
+
             if (current_index == ')' || i + 1 == inputEquation.size())
             {
                 equationQueue.push(")");
@@ -101,12 +105,7 @@ void Calculator::printConversion()
 {
     while (!equationQueue.empty())
     {
-
-        cout << equationQueue.front() << " ";
-        // if (!isNumber(equationQueue.front()))
-        // {
-        //     cout << equationQueue.front() << endl;
-        // }
+        cout << equationQueue.front() << endl;
         equationQueue.pop();
     }
 }
@@ -119,13 +118,13 @@ double Calculator::calculate()
     {
         string temp = equationQueue.front();
         // case 1: finds an open bracket
-        if (temp == "(")
+        if (equationQueue.front() == "(")
         {
             equationQueue.pop();
             result += calculate();
         }
         // case 2: finds a close bracket
-        else if (temp == ")")
+        else if (equationQueue.front() == ")")
         {
             equationQueue.pop();
             return result;
@@ -133,12 +132,8 @@ double Calculator::calculate()
         // base case: addition of number
         else
         {
+            result += stod(equationQueue.front());
             equationQueue.pop();
-            // if (!isNumber(temp))
-            // {
-            //     cout << temp << endl;
-            // }
-            result += stod(temp);
         }
     }
     return result;
