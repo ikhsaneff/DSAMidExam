@@ -8,9 +8,9 @@
 2. Using Github, you understand how to use the fork option, pull request option.
 3. Teamwork on solving the problem. In your report, you must state the person in charge. Please make sure each member has an equivalent contribution.
 4. Submission in .zip folder. Included:
-    1. Report
-    2. Work Interface of code trial and error (SS)
-    3. Video showcasing project
+    1. [ ] Report
+    2. [ ] Work Interface of code trial and error (SS)
+    3. [ ] Video showcasing project
 
 ## TODO List:
 - [X] The calculator should have + - / :   (10 points)
