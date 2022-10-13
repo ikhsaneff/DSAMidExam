@@ -32,16 +32,13 @@ int main()
         // to do a calculation
         if (prompt == 1)
         {
-            cin.ignore();
+             cin.ignore();
             cout << "Enter the equation: ";
             cin >> inputEquation;
-            cout << "Enter result: "; // Remove this
-            cin >> test;              // after testing
-            result = test;            // input equation result after testing
             Calculator calculator(inputEquation);
-            cout << "Result: ";
-            calculator.printConversion();
-            // cout << "Result: " << test << endl;
+            // result = calc.calculate(inputEquation); // input equation result after testing
+            cout << "Result: "; calculator.printConversion();
+            // cout << "Result: " << result << endl;  
 
             string calcResult = to_string(result);
             tempHistory = inputEquation + " = " + calcResult;
