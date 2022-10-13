@@ -43,7 +43,7 @@ void Calculator::toStringQueue(string inputEquation)
             equationQueue.push(temp);
         }
 
-        if (current_index == '-' || current_index == '+' || current_index == inputEquation.back())
+        if (inputEquation[i + 1] == '-' || current_index == '+')
         {
             equationQueue.push(tempNum);
             tempNum = "";
@@ -53,7 +53,6 @@ void Calculator::toStringQueue(string inputEquation)
             equationQueue.push(tempNum);
             tempNum = "";
             string temp(1, current_index);
-            cout << current_index << endl;
             equationQueue.push(temp);
         }
     }
