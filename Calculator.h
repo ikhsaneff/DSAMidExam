@@ -56,41 +56,6 @@ void Calculator::toStringQueue(string inputEquation)
             equationQueue.push(temp);
         }
     }
-
-    // while (!inputEquation.empty())
-    // { // Loops through string
-    //     if (inputEquation.front() == ' ' || inputEquation.front() == '+')
-    //     {
-    //         inputEquation.erase(inputEquation.begin());
-    //     }
-    //     else if (isdigit(inputEquation.front()) || inputEquation.front() == '-')
-    //     {
-    //         tempNum += inputEquation.front();
-    //         inputEquation.erase(inputEquation.begin());
-    //     }
-    //     else if (inputEquation.front() == '(')
-    //     {
-    //         tempSymbol += inputEquation.front();
-    //         equationQueue.push(tempSymbol);
-    //         inputEquation.erase(inputEquation.begin());
-    //         tempSymbol = "";
-    //     }
-
-    //     if (inputEquation.front() == '-' || inputEquation.front() == '+' || inputEquation.empty())
-    //     {
-    //         equationQueue.push(tempNum);
-    //         tempNum = "";
-    //     }
-    //     else if (inputEquation.front() == ')')
-    //     {
-    //         equationQueue.push(tempNum);
-    //         tempNum = "";
-    //         tempSymbol += inputEquation.front();
-    //         equationQueue.push(tempSymbol);
-    //         inputEquation.erase(inputEquation.begin());
-    //         tempSymbol = "";
-    //     }
-    // }
 }
 
 // For testing purpose
@@ -106,16 +71,19 @@ void Calculator::printConversion(string inputEquation)
     }
 }
 
-// double Calculator::calculate(string inputEquation) {
+// Addition and Subtraction
+double Calculator::calculate(string inputEquation)
+{
 
-//     toStringQueue(inputEquation);
+    toStringQueue(inputEquation);
 
-//     while (!equationQueue.empty()) {
-//         finalResult += stod(equationQueue.front());
-//         equationQueue.pop();
-//     }
+    while (!equationQueue.empty())
+    {
+        finalResult += stod(equationQueue.front());
+        equationQueue.pop();
+    }
 
-//     return finalResult;
-// }
+    return finalResult;
+}
 
 #endif
