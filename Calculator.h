@@ -12,22 +12,28 @@ using namespace std;
 class Calculator
 {
 public:
+    Calculator(string);
+    void toStringQueue();
+    double finalResult;
+    double calculate();
+    void printConversion();
+    double calculateBracket();
+    void multiply(string);
+
+private:
     string inputEquation;
     queue<string> equationQueue;
-    void toStringQueue(string inputEquation);
-    double finalResult;
-    double calculate(string inputEquation);
-    void printConversion(string inputEquation);
-    void bracketDetect(queue<string> equationQueue);
-    void multiply(string);
 };
 
-void Calculator::bracketDetect(queue<string> equationQueue)
+//@Definition: Default Constructor
+Calculator::Calculator(string inputEquation)
 {
+    this->inputEquation = inputEquation;
+    toStringQueue();
 }
 
 //@Definition:
-void Calculator::toStringQueue(string inputEquation)
+void Calculator::toStringQueue()
 {
 
     string tempNum = "";
@@ -81,10 +87,8 @@ void Calculator::toStringQueue(string inputEquation)
 }
 
 // For testing purpose
-void Calculator::printConversion(string inputEquation)
+void Calculator::printConversion()
 {
-
-    toStringQueue(inputEquation);
     while (!equationQueue.empty())
     {
         cout << equationQueue.front() << " ";
@@ -92,19 +96,12 @@ void Calculator::printConversion(string inputEquation)
     }
 }
 
-// For testing purpose
-void Calculator::multiply(string inputEquation)
-{
-}
 // Calculate
-double Calculator::calculate(string inputEquation)
+double Calculator::calculate()
 {
-
-    toStringQueue(inputEquation);
     while (!equationQueue.empty())
     {
         string temp = equationQueue.front();
-
         finalResult += stod(temp);
         equationQueue.pop();
     }

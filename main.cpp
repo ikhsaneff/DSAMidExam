@@ -2,8 +2,6 @@
 
 int main()
 {
-
-    Calculator calc;
     string inputEquation;
     double result;
     int command;
@@ -11,7 +9,8 @@ int main()
 
     cout << "Enter the equation: ";
     getline(cin, inputEquation);
-    // cout << "Result: " << calc.calculate(inputEquation);
+    Calculator calculator(inputEquation);
+    // cout << "Result: " << calculator.calculate();
     cout << "Result: ";
-    calc.printConversion(inputEquation);
+    calculator.printConversion();
 }
