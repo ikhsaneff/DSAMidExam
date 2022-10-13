@@ -17,7 +17,6 @@ public:
     double calculate();
     double multDiv(string);
     void printConversion();
-    void remakeQueue(string);
     bool isNumber(string);
 
 private:
@@ -148,18 +147,6 @@ double Calculator::calculate()
         }
     }
     return result;
-}
-//(20*3)/5+20+(20*4)+1
-void Calculator::remakeQueue(string front)
-{
-    queue<string> newQueue;
-    newQueue.push(front);
-    while (!equationQueue.empty())
-    {
-        newQueue.push(equationQueue.front());
-        equationQueue.pop();
-    }
-    equationQueue = newQueue;
 }
 
 double Calculator::multDiv(string equation)
