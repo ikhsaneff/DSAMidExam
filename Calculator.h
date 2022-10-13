@@ -6,6 +6,7 @@
 #include <vector>
 #include <queue>
 #include <stdexcept>
+#include <math.h>
 
 using namespace std;
 
@@ -17,6 +18,7 @@ public:
     double calculate();
     void printConversion();
     bool isNumber(string);
+    void trigonometric();
 
 private:
     string inputEquation;
@@ -42,11 +44,57 @@ Calculator::Calculator(string inputEquation)
     toStringQueue();
 }
 
+void Calculator::trigonometric() 
+{
+    queue<string> tempEquation;
+
+    while (!equationQueue.empty())
+    {
+        string tempNum = ""; 
+        double num;
+        
+        if (equationQueue.front() == "sin") 
+        {
+            equationQueue.pop();
+            num = stod(equationQueue.front())*3.14159/180;
+            tempNum = to_string(sin(num));
+            tempEquation.push(tempNum);
+        }
+        else if (equationQueue.front() == "cos")
+        {
+            equationQueue.pop();
+            num = stod(equationQueue.front())*3.14159/180;
+            tempNum = to_string(cos(num));
+            tempEquation.push(tempNum);
+        }
+        else if (equationQueue.front() == "tan")
+        {
+            equationQueue.pop();
+            num = stod(equationQueue.front())*3.14159/180;
+            tempNum = to_string(tan(num));
+            tempEquation.push(tempNum);
+        }
+        else 
+        {
+        tempEquation.push(equationQueue.front());
+        }
+
+        equationQueue.pop();
+    }
+
+    while (!tempEquation.empty()) 
+    {
+        equationQueue.push(tempEquation.front());
+        tempEquation.pop();
+    }
+    
+}
+
 //@Definition:
 void Calculator::toStringQueue()
 {
 
-    string tempNum = "";
+    string tempNum = "", tempSymbol = "";
     int decimal = 0, bracketed = 0;
 
     for (int i = 0; i < inputEquation.size(); i++)
@@ -71,6 +119,21 @@ void Calculator::toStringQueue()
         {
             equationQueue.push("(");
             bracketed++;
+        }
+        else if (current_index == 's' || current_index == 'c' || current_index == 't') 
+        {
+            for (int i = 0; i < 3; i++) 
+            {
+                tempSymbol += inputEquation.front();
+                inputEquation.erase (inputEquation.begin());
+            }
+
+            equationQueue.push(tempSymbol);
+            tempSymbol = "";
+        }
+        else
+        {
+            continue;
         }
 
         if (decimal > 1)
@@ -105,7 +168,8 @@ void Calculator::printConversion()
 {
     while (!equationQueue.empty())
     {
-        cout << equationQueue.front() << endl;
+        cout << equationQueue.front();
+        cout << "|";
         equationQueue.pop();
     }
 }
@@ -132,6 +196,7 @@ double Calculator::calculate()
         // base case: addition of number
         else
         {
+            trigonometric();
             result += stod(equationQueue.front());
             equationQueue.pop();
         }
