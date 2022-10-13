@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <queue>
+#include <stdexcept>
 
 using namespace std;
 
@@ -18,6 +19,7 @@ public:
     double calculate(string inputEquation);
     void printConversion(string inputEquation);
     void bracketDetect(queue<string> equationQueue);
+    void multiply(string);
 };
 
 void Calculator::bracketDetect(queue<string> equationQueue)
@@ -28,33 +30,53 @@ void Calculator::bracketDetect(queue<string> equationQueue)
 void Calculator::toStringQueue(string inputEquation)
 {
 
-    string tempNum = "", tempSymbol = "";
+    string tempNum = "";
+    int decimal = 0, bracketed = 0;
 
     for (int i = 0; i < inputEquation.size(); i++)
     {
         char current_index = inputEquation[i];
-        if (isdigit(current_index) || current_index == '-')
+        if (bracketed == 0 && inputEquation[0] != '(')
         {
+            equationQueue.push("(");
+            bracketed++;
+        }
+
+        if (isdigit(current_index) || current_index == '-' || current_index == '/' || current_index == '*')
+        {
+            tempNum += current_index;
+        }
+        else if (current_index == '.')
+        {
+            decimal++;
             tempNum += current_index;
         }
         else if (current_index == '(')
         {
-            string temp(1, current_index);
-            equationQueue.push(temp);
+            equationQueue.push("(");
+            bracketed++;
         }
 
-        if (inputEquation[i + 1] == '-' || current_index == '+')
+        if (decimal > 1)
+        {
+            throw invalid_argument("Invalid number, too many . in one number");
+        }
+
+        if (inputEquation[i + 1] == '-' || current_index == '+' || current_index == ')' || i + 1 == inputEquation.size())
         {
             equationQueue.push(tempNum);
             tempNum = "";
+            decimal = 0;
+            if (current_index == ')' || i + 1 == inputEquation.size())
+            {
+                equationQueue.push(")");
+                bracketed--;
+            }
         }
-        else if (current_index == ')')
-        {
-            equationQueue.push(tempNum);
-            tempNum = "";
-            string temp(1, current_index);
-            equationQueue.push(temp);
-        }
+    }
+    for (int i = 0; i < bracketed; i++)
+    {
+        equationQueue.push(")");
     }
 }
 
@@ -63,7 +85,6 @@ void Calculator::printConversion(string inputEquation)
 {
 
     toStringQueue(inputEquation);
-
     while (!equationQueue.empty())
     {
         cout << equationQueue.front() << " ";
@@ -71,15 +92,20 @@ void Calculator::printConversion(string inputEquation)
     }
 }
 
-// Addition and Subtraction
+// For testing purpose
+void Calculator::multiply(string inputEquation)
+{
+}
+// Calculate
 double Calculator::calculate(string inputEquation)
 {
 
     toStringQueue(inputEquation);
-
     while (!equationQueue.empty())
     {
-        finalResult += stod(equationQueue.front());
+        string temp = equationQueue.front();
+
+        finalResult += stod(temp);
         equationQueue.pop();
     }
 
