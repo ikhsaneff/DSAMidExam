@@ -17,26 +17,13 @@ public:
     void toStringQueue();
     double calculate();
     double multDiv(string);
+    double trigonometric(string);
     void printConversion();
-    bool isNumber(string);
-    void trigonometric();
 
 private:
     string inputEquation;
     queue<string> equationQueue;
 };
-
-bool isNumber(string toCheck)
-{
-    for (int i = 0; i < toCheck.size(); i++)
-    {
-        if (!isdigit(toCheck[i]))
-        {
-            return false;
-        }
-    }
-    return true;
-}
 
 //@Definition: Default Constructor
 Calculator::Calculator(string inputEquation)
@@ -45,63 +32,39 @@ Calculator::Calculator(string inputEquation)
     toStringQueue();
 }
 
-void Calculator::trigonometric() 
+double Calculator::trigonometric(string trig)
 {
-    queue<string> tempEquation;
-
-    while (!equationQueue.empty())
+    double tempNum;
+    double num;
+    if (trig == "sin")
     {
-        string tempNum = ""; 
-        double num;
-        
-        if (equationQueue.front() == "sin") 
-        {
-            equationQueue.pop();
-            num = stod(equationQueue.front())*3.14159/180;
-            tempNum = to_string(sin(num));
-            tempEquation.push(tempNum);
-        }
-        else if (equationQueue.front() == "cos")
-        {
-            equationQueue.pop();
-            num = stod(equationQueue.front())*3.14159/180;
-            tempNum = to_string(cos(num));
-            tempEquation.push(tempNum);
-        }
-        else if (equationQueue.front() == "tan")
-        {
-            equationQueue.pop();
-            num = stod(equationQueue.front())*3.14159/180;
-            tempNum = to_string(tan(num));
-            tempEquation.push(tempNum);
-        }
-        else 
-        {
-        tempEquation.push(equationQueue.front());
-        }
-
-        equationQueue.pop();
+        num = stod(equationQueue.front()) * 3.14159 / 180;
+        tempNum = sin(num);
     }
-
-    while (!tempEquation.empty()) 
+    else if (trig == "cos")
     {
-        equationQueue.push(tempEquation.front());
-        tempEquation.pop();
+        num = stod(equationQueue.front()) * 3.14159 / 180;
+        tempNum = cos(num);
     }
-    
+    else if (trig == "tan")
+    {
+        num = stod(equationQueue.front()) * 3.14159 / 180;
+        tempNum = tan(num);
+    }
+    equationQueue.pop();
+    return tempNum;
 }
 
 //@Definition:
 void Calculator::toStringQueue()
 {
-
     string tempNum = "", tempSymbol = "";
     int decimal = 0, bracketed = 0;
 
     for (int i = 0; i < inputEquation.size(); i++)
     {
         char current_index = inputEquation[i];
-        if (bracketed == 0)
+        if (i == 0)
         {
             equationQueue.push("(");
             bracketed++;
@@ -116,25 +79,21 @@ void Calculator::toStringQueue()
             decimal++;
             tempNum += current_index;
         }
-        else if (current_index == '(')
+        else if (current_index == 's' || current_index == 'c' || current_index == 't')
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                tempSymbol += inputEquation[i + j];
+            }
+            equationQueue.push(tempSymbol);
+            tempSymbol = "";
+            i += 2;
+        }
+
+        if (current_index == '(')
         {
             equationQueue.push("(");
             bracketed++;
-        }
-        else if (current_index == 's' || current_index == 'c' || current_index == 't') 
-        {
-            for (int i = 0; i < 3; i++) 
-            {
-                tempSymbol += inputEquation.front();
-                inputEquation.erase (inputEquation.begin());
-            }
-
-            equationQueue.push(tempSymbol);
-            tempSymbol = "";
-        }
-        else
-        {
-            continue;
         }
 
         if (decimal > 1)
@@ -144,8 +103,7 @@ void Calculator::toStringQueue()
 
         if (current_index == ')' && (tempNum.find('/') < tempNum.length() || tempNum.find('*') < tempNum.length()))
         {
-            // bracketed--;
-            continue;
+            bracketed--;
         }
 
         if ((inputEquation[i + 1] == '-' || current_index == '+' || current_index == ')' || i + 1 == inputEquation.size()) && tempNum != "")
@@ -166,6 +124,7 @@ void Calculator::toStringQueue()
     {
         equationQueue.push(")");
     }
+    printConversion();
 }
 
 // For testing purpose
@@ -174,11 +133,9 @@ void Calculator::printConversion()
     queue<string> printQ = equationQueue;
     while (!printQ.empty())
     {
-        cout << equationQueue.front();
-        cout << "|";
-        equationQueue.pop();
+        cout << printQ.front() << " ";
+        printQ.pop();
     }
-    cout << endl;
 }
 
 // Calculate bracket recursive
@@ -202,12 +159,25 @@ double Calculator::calculate()
         // case 3: multiplication/divison of number
         else if (first_number.find('/') < first_number.length() || first_number.find('*') < first_number.length())
         {
-            result += multDiv(first_number);
+            if (first_number[0] == '/' || first_number[0] == '*')
+            {
+                string tempString = to_string(result);
+                // cout << tempString + first_number << endl;
+                result = multDiv(tempString + first_number);
+            }
+            else
+            {
+                result += multDiv(first_number);
+            }
+        }
+        //  case 4: trigonometry
+        else if (first_number == "sin" || first_number == "cos" || first_number == "tan")
+        {
+            result += trigonometric(first_number);
         }
         //  base case: addition of number
         else
         {
-            trigonometric();
             result += stod(first_number);
         }
     }

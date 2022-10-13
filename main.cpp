@@ -15,9 +15,8 @@ int main()
     getline(cin, inputEquation);
     Calculator calculator(inputEquation);
     result = calculator.calculate();
-    cout << "Result: " << result << endl;
-    calculator.printConversion();
-
+    cout << "Result: " << result;
+    // calculator.printConversion();
     // while (prompt != 0)
     // {
     //     cout << "Welcome!\n";
@@ -28,15 +27,15 @@ int main()
     //          << "Enter... ";
     //     cin >> prompt;
     //     system("cls");
-        // to do a calculation
-        if (prompt == 1)
-        {
-             cin.ignore();
-            cout << "Enter the equation: ";
-            cin >> inputEquation;
-            Calculator calculator(inputEquation);
-            // result = calc.calculate(inputEquation); // input equation result after testing
-            cout << "Result: "; calculator.printConversion();
+    // to do a calculation
+    // if (prompt == 1)
+    // {
+    //      cin.ignore();
+    //     cout << "Enter the equation: ";
+    //     cin >> inputEquation;
+    //     Calculator calculator(inputEquation);
+    //     // result = calc.calculate(inputEquation); // input equation result after testing
+    //     cout << "Result: "; calculator.printConversion();
 
     //         string calcResult = to_string(result);
     //         tempHistory = inputEquation + " = " + calcResult;
