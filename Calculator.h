@@ -15,7 +15,9 @@ public:
     Calculator(string);
     void toStringQueue();
     double calculate();
+    double multDiv(string);
     void printConversion();
+    void remakeQueue(string);
     bool isNumber(string);
 
 private:
@@ -78,22 +80,26 @@ void Calculator::toStringQueue()
             throw invalid_argument("Invalid number, too many . in one number");
         }
 
-        if (inputEquation[i + 1] == '-' || current_index == '+' || current_index == ')' || i + 1 == inputEquation.size())
+        if (current_index == ')' && (tempNum.find('/') < tempNum.length() || tempNum.find('*') < tempNum.length()))
         {
-            if (tempNum != "")
-            {
-                equationQueue.push(tempNum);
-                tempNum = "";
-                decimal = 0;
-            }
+            // bracketed--;
+            continue;
+        }
 
-            if (current_index == ')' || i + 1 == inputEquation.size())
-            {
-                equationQueue.push(")");
-                bracketed--;
-            }
+        if ((inputEquation[i + 1] == '-' || current_index == '+' || current_index == ')' || i + 1 == inputEquation.size()) && tempNum != "")
+        {
+            equationQueue.push(tempNum);
+            tempNum = "";
+            decimal = 0;
+        }
+
+        if (current_index == ')')
+        {
+            equationQueue.push(")");
+            bracketed--;
         }
     }
+
     for (int i = 0; i < bracketed; i++)
     {
         equationQueue.push(")");
@@ -103,11 +109,13 @@ void Calculator::toStringQueue()
 // For testing purpose
 void Calculator::printConversion()
 {
-    while (!equationQueue.empty())
+    queue<string> printQ = equationQueue;
+    while (!printQ.empty())
     {
-        cout << equationQueue.front() << endl;
-        equationQueue.pop();
+        cout << printQ.front() << " ";
+        printQ.pop();
     }
+    cout << endl;
 }
 
 // Calculate bracket recursive
@@ -116,27 +124,87 @@ double Calculator::calculate()
     double result;
     while (!equationQueue.empty())
     {
-        string temp = equationQueue.front();
+        string first_number = equationQueue.front();
+        equationQueue.pop();
         // case 1: finds an open bracket
-        if (equationQueue.front() == "(")
+        if (first_number == "(")
         {
-            equationQueue.pop();
             result += calculate();
         }
         // case 2: finds a close bracket
-        else if (equationQueue.front() == ")")
+        else if (first_number == ")")
         {
-            equationQueue.pop();
             return result;
         }
-        // base case: addition of number
+        // case 3: multiplication/divison of number
+        else if (first_number.find('/') < first_number.length() || first_number.find('*') < first_number.length())
+        {
+            result += multDiv(first_number);
+        }
+        //  base case: addition of number
         else
         {
-            result += stod(equationQueue.front());
-            equationQueue.pop();
+            result += stod(first_number);
         }
     }
     return result;
 }
+//(20*3)/5+20+(20*4)+1
+void Calculator::remakeQueue(string front)
+{
+    queue<string> newQueue;
+    newQueue.push(front);
+    while (!equationQueue.empty())
+    {
+        newQueue.push(equationQueue.front());
+        equationQueue.pop();
+    }
+    equationQueue = newQueue;
+}
 
+double Calculator::multDiv(string equation)
+{
+    string tempNum = "";
+    queue<string> tempResult;
+    for (int i = 0; i < equation.size(); i++)
+    {
+        if (isdigit(equation[i]) || equation[i] == '.')
+        {
+            tempNum += equation[i];
+        }
+
+        if (equation[i] == '/' || equation[i] == '*')
+        {
+            tempResult.push(tempNum);
+            tempNum = "";
+            string temp(1, equation[i]);
+            tempResult.push(temp);
+        }
+
+        if (tempNum != "" && i + 1 == equation.size())
+        {
+            tempResult.push(tempNum);
+            tempNum = "";
+        }
+    }
+
+    double result;
+    result = stod(tempResult.front());
+    tempResult.pop();
+    while (!tempResult.empty())
+    {
+        if (tempResult.front() == "/")
+        {
+            tempResult.pop();
+            result /= stod(tempResult.front());
+        }
+        else if (tempResult.front() == "*")
+        {
+            tempResult.pop();
+            result *= stod(tempResult.front());
+        }
+        tempResult.pop();
+    }
+    return result;
+}
 #endif
