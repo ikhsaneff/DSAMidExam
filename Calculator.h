@@ -25,9 +25,9 @@ private:
 
 bool isNumber(string toCheck)
 {
-    for (auto it = toCheck.begin(); it != toCheck.end(); ++it)
+    for (int i = 0; i < toCheck.size(); i++)
     {
-        if (!isdigit(*it))
+        if (!isdigit(toCheck[i]))
         {
             return false;
         }
@@ -101,7 +101,12 @@ void Calculator::printConversion()
 {
     while (!equationQueue.empty())
     {
+
         cout << equationQueue.front() << " ";
+        // if (!isNumber(equationQueue.front()))
+        // {
+        //     cout << equationQueue.front() << endl;
+        // }
         equationQueue.pop();
     }
 }
@@ -129,6 +134,10 @@ double Calculator::calculate()
         else
         {
             equationQueue.pop();
+            // if (!isNumber(temp))
+            // {
+            //     cout << temp << endl;
+            // }
             result += stod(temp);
         }
     }
