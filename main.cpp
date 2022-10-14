@@ -28,7 +28,11 @@ int main ()
         << " - multiply/divide/add/sub do N*J or N/J or N+j or N-J where N and J are numbers\n"
         << "\nConstraints of operation:\n"
         << " - multiplication can't come after other operations (Ex. sin30*2 not possible, 2*sin30 possible)\n"
-        << " - division can't come after other operations (Ex. sin30/2 not possible, 2/sin30 possible)\n";
+        << " - division can't come after other operations (Ex. sin30/2 not possible, 2/sin30 possible)\n"
+		<< "\nWe try using these equations:"
+		<< "\n - log(100) + sin90 + 1 + tan45 = 5"
+		<< "\n - 2^2 + V49 + 2 = 13\n"
+		<< "\n - V81 - 7 + log(100) = 4\n";
         cout << "Welcome!\n";
         cout << "Command: \n"
 		     << " 1: Calculate\n"
