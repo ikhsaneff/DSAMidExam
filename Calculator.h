@@ -145,35 +145,45 @@ void Calculator::toStringQueue() {
 
 void Calculator::exponent()
 {
-    string Num1, Num2, tempResult;
+    string Num1, tempResult;
     queue<string> tempEquation;
 
-    while (!equationQueue.empty())
+    for (int i = 0; i < equationQueue.size(); i++)
     {   
         Num1 += equationQueue.front();
-        equationQueue.pop(); //delete Num1 from queue
 
-        if (equationQueue.front() == "^")
+        if (isNumber(Num1))
         {
-            equationQueue.pop();
-            tempResult += to_string(pow(stod(Num1), stod(equationQueue.front())));
-            equationQueue.pop();
-            tempEquation.push(tempResult);
-            tempResult = "";
-            Num1 = "";
+            equationQueue.pop(); // delete Num1
+            if (equationQueue.front() == "^")
+            {
+                equationQueue.pop(); //delete symbol
+                tempResult += to_string(pow(stod(Num1), stod(equationQueue.front())));
+                equationQueue.pop(); //delete Num2
+                tempEquation.push(tempResult);
+                tempResult = "";
+                Num1 = "";
+            }
+            else
+            {
+                tempEquation.push(Num1);
+                Num1 = "";
+            }  
         }
         else if (Num1 == "V")
         {
+            equationQueue.pop(); //delete Num1 from queue
             Num1 = "";
             tempResult += to_string(sqrt(stod(equationQueue.front())));
             equationQueue.pop();
             tempEquation.push(tempResult);
             tempResult = "";
         }
-        else
+        else 
         {
             tempEquation.push(Num1);
             Num1 = "";
+            equationQueue.pop(); //delete Num1 from queue
         }   
     }
 
@@ -182,13 +192,8 @@ void Calculator::exponent()
         equationQueue.push(tempEquation.front());
         tempEquation.pop();
     }
-    
-    // while (!equationQueue.empty())
-    // {
-    //     cout << equationQueue.front() << "|";
-    //     equationQueue.pop();
-    // }
-    
+    cout << equationQueue.size() << "<-size ";
+
 }
 
 void Calculator::logarithmic()
@@ -310,9 +315,9 @@ void Calculator::printConversion() {
 
 double Calculator::calculate() {
 
-    logarithmic();
+    // logarithmic();
     // trigonometric();
-    // exponent();
+    exponent();
 
     while (!equationQueue.empty()) {
         finalResult += stod(equationQueue.front());
