@@ -18,6 +18,7 @@ public:
     double calculate();
     double multDiv(string);
     double trigonometric(string);
+    queue<string> exponent();
     void printConversion();
 
 private:
@@ -59,16 +60,11 @@ double Calculator::trigonometric(string trig)
 void Calculator::toStringQueue()
 {
     string tempNum = "", tempSymbol = "";
-    int decimal = 0, bracketed = 0;
+    int decimal = 0;
 
     for (int i = 0; i < inputEquation.size(); i++)
     {
         char current_index = inputEquation[i];
-        if (i == 0)
-        {
-            equationQueue.push("(");
-            bracketed++;
-        }
 
         if (isdigit(current_index) || current_index == '-' || current_index == '/' || current_index == '*')
         {
@@ -89,11 +85,22 @@ void Calculator::toStringQueue()
             tempSymbol = "";
             i += 2;
         }
-
-        if (current_index == '(')
+        else if (current_index == '^' || current_index == 'V')
         {
-            equationQueue.push("(");
-            bracketed++;
+            string temp(1, current_index);
+            equationQueue.push(temp);
+        }
+
+        else if (current_index == 'l')
+        {
+            if (inputEquation[i + 1] == 'o')
+            {
+                // berarti log
+            }
+            else if (inputEquation[i + 1] == 'n')
+            {
+                // berartiln
+            }
         }
 
         if (decimal > 1)
@@ -101,28 +108,12 @@ void Calculator::toStringQueue()
             throw invalid_argument("Invalid number, too many . in one number");
         }
 
-        if (current_index == ')' && (tempNum.find('/') < tempNum.length() || tempNum.find('*') < tempNum.length()))
-        {
-            bracketed--;
-        }
-
-        if ((inputEquation[i + 1] == '-' || current_index == '+' || current_index == ')' || i + 1 == inputEquation.size()) && tempNum != "")
+        if ((inputEquation[i + 1] == '-' || inputEquation[i + 1] == '^' || current_index == '+' || i + 1 == inputEquation.size()) && tempNum != "")
         {
             equationQueue.push(tempNum);
             tempNum = "";
             decimal = 0;
         }
-
-        if (current_index == ')')
-        {
-            equationQueue.push(")");
-            bracketed--;
-        }
-    }
-
-    for (int i = 0; i < bracketed; i++)
-    {
-        equationQueue.push(")");
     }
     printConversion();
 }
@@ -146,42 +137,71 @@ double Calculator::calculate()
     {
         string first_number = equationQueue.front();
         equationQueue.pop();
-        // case 1: finds an open bracket
-        if (first_number == "(")
-        {
-            result += calculate();
-        }
-        // case 2: finds a close bracket
-        else if (first_number == ")")
-        {
-            return result;
-        }
-        // case 3: multiplication/divison of number
-        else if (first_number.find('/') < first_number.length() || first_number.find('*') < first_number.length())
-        {
-            if (first_number[0] == '/' || first_number[0] == '*')
-            {
-                string tempString = to_string(result);
-                // cout << tempString + first_number << endl;
-                result = multDiv(tempString + first_number);
-            }
-            else
-            {
-                result += multDiv(first_number);
-            }
-        }
-        //  case 4: trigonometry
+        // case 1: multiplication/divison of number
+        if (first_number.find('/') < first_number.length() || first_number.find('*') < first_number.length())
+            result += multDiv(first_number);
+        //  case 2: trigonometry
         else if (first_number == "sin" || first_number == "cos" || first_number == "tan")
-        {
             result += trigonometric(first_number);
+        // case 3: exponent
+        else if (equationQueue.front() == '^')
+        {
+            exponent();
         }
         //  base case: addition of number
         else
-        {
             result += stod(first_number);
-        }
     }
     return result;
+}
+
+queue<string> Calculator::exponent()
+{
+    string Num1, Num2, tempResult;
+    queue<string> tempEquation;
+
+    while (!equationQueue.empty())
+    {
+        Num1 += equationQueue.front();
+        equationQueue.pop(); // delete Num1 from queue
+
+        if (equationQueue.front() == "^")
+        {
+            equationQueue.pop();
+            tempResult += to_string(pow(stod(Num1), stod(equationQueue.front())));
+            equationQueue.pop();
+            tempEquation.push(tempResult);
+            tempResult = "";
+            Num1 = "";
+        }
+        else if (Num1 == "V")
+        {
+            Num1 = "";
+            tempResult += to_string(sqrt(stod(equationQueue.front())));
+            equationQueue.pop();
+            tempEquation.push(tempResult);
+            tempResult = "";
+        }
+        else
+        {
+            tempEquation.push(Num1);
+            Num1 = "";
+        }
+    }
+
+    while (!tempEquation.empty())
+    {
+        equationQueue.push(tempEquation.front());
+        tempEquation.pop();
+    }
+
+    // while (!equationQueue.empty())
+    // {
+    //     cout << equationQueue.front() << "|";
+    //     equationQueue.pop();
+    // }
+
+    return equationQueue;
 }
 
 double Calculator::multDiv(string equation)
@@ -191,9 +211,7 @@ double Calculator::multDiv(string equation)
     for (int i = 0; i < equation.size(); i++)
     {
         if (isdigit(equation[i]) || equation[i] == '.')
-        {
             tempNum += equation[i];
-        }
 
         if (equation[i] == '/' || equation[i] == '*')
         {
