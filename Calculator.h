@@ -5,228 +5,321 @@
 #include <string>
 #include <vector>
 #include <queue>
-#include <stdexcept>
 #include <math.h>
 
 using namespace std;
 
-class Calculator
-{
+class Calculator {
 public:
     Calculator(string);
-    void toStringQueue();
-    double calculate();
-    double multDiv(string);
-    double trigonometric(string);
-    void printConversion();
-
-private:
     string inputEquation;
     queue<string> equationQueue;
-};
+    double  tempResult;
+    double finalResult;
 
-//@Definition: Default Constructor
+    void toStringQueue();
+    double calculate();
+    void printConversion();
+    void trigonometric();
+    void logarithmic();
+    bool isNumber(string);
+    void exponent();
+}; 
+
 Calculator::Calculator(string inputEquation)
 {
     this->inputEquation = inputEquation;
     toStringQueue();
 }
 
-double Calculator::trigonometric(string trig)
+bool Calculator::isNumber(string toCheck)
 {
-    double tempNum;
-    double num;
-    if (trig == "sin")
+    for (int i = 0; i < toCheck.size(); i++)
     {
-        num = stod(equationQueue.front()) * 3.14159 / 180;
-        tempNum = sin(num);
+        if (!isdigit(toCheck[i]))
+        {
+            return false;
+        }
     }
-    else if (trig == "cos")
-    {
-        num = stod(equationQueue.front()) * 3.14159 / 180;
-        tempNum = cos(num);
-    }
-    else if (trig == "tan")
-    {
-        num = stod(equationQueue.front()) * 3.14159 / 180;
-        tempNum = tan(num);
-    }
-    equationQueue.pop();
-    return tempNum;
+    return true;
 }
 
-//@Definition:
-void Calculator::toStringQueue()
-{
-    string tempNum = "", tempSymbol = "";
-    int decimal = 0, bracketed = 0;
+void Calculator::toStringQueue() {
+    
+    string tempNum = "", tempSymbol = "", tempBase = "";
 
-    for (int i = 0; i < inputEquation.size(); i++)
-    {
-        char current_index = inputEquation[i];
-        if (i == 0)
+    while (!inputEquation.empty()) {
+        if (inputEquation.front() == ' ' || inputEquation.front() == '+') 
         {
-            equationQueue.push("(");
-            bracketed++;
-        }
-
-        if (isdigit(current_index) || current_index == '-' || current_index == '/' || current_index == '*')
+            inputEquation.erase (inputEquation.begin());
+        } 
+        else if (isdigit(inputEquation.front()) || inputEquation.front() == '-') 
         {
-            tempNum += current_index;
-        }
-        else if (current_index == '.')
+            tempNum += inputEquation.front();
+            inputEquation.erase (inputEquation.begin());
+        } 
+        else if (inputEquation.front() == '(' || inputEquation.front() == '^' || inputEquation.front() == 'V')
         {
-            decimal++;
-            tempNum += current_index;
-        }
-        else if (current_index == 's' || current_index == 'c' || current_index == 't')
+            tempSymbol += inputEquation.front();
+            equationQueue.push(tempSymbol);
+            inputEquation.erase (inputEquation.begin());
+            tempSymbol = "";
+        } 
+        else if (inputEquation.front() == 's' || inputEquation.front() == 'c' || inputEquation.front() == 't') 
         {
-            for (int j = 0; j < 3; j++)
+            for (int i = 0; i < 3; i++) 
             {
-                tempSymbol += inputEquation[i + j];
+                tempSymbol += inputEquation.front();
+                inputEquation.erase (inputEquation.begin());
             }
+
             equationQueue.push(tempSymbol);
             tempSymbol = "";
-            i += 2;
+        }
+        else if (inputEquation.front() == 'l')
+        {
+            tempSymbol += inputEquation.front();
+            inputEquation.erase (inputEquation.begin());
+            if (inputEquation.front() == 'o') 
+            {
+                tempSymbol += inputEquation.front();
+                inputEquation.erase (inputEquation.begin());
+                tempSymbol += inputEquation.front();
+                inputEquation.erase (inputEquation.begin());
+                equationQueue.push(tempSymbol);
+                tempSymbol = "";
+
+                if (isdigit(inputEquation.front()))
+                {
+                    while (!(inputEquation.front() == '('))
+                    {
+                        tempBase += inputEquation.front();
+                        inputEquation.erase (inputEquation.begin());
+                    }
+
+                    if (!(tempBase == ""))
+                    {
+                        equationQueue.push(tempBase);
+                        tempBase = "";
+                    } else 
+                        continue;
+                }
+                else
+                    continue;
+                
+                
+            } 
+            else if (inputEquation.front() == 'n')
+            {
+                tempSymbol += inputEquation.front();
+                inputEquation.erase (inputEquation.begin());
+                equationQueue.push(tempSymbol);
+                tempSymbol = "";
+            }
+
         }
 
-        if (current_index == '(')
+        if (inputEquation.front() == '-' || inputEquation.front() == '+' || inputEquation.front() == '^' || inputEquation.front() == 'V' || inputEquation.empty()) 
         {
-            equationQueue.push("(");
-            bracketed++;
-        }
-
-        if (decimal > 1)
-        {
-            throw invalid_argument("Invalid number, too many . in one number");
-        }
-
-        if (current_index == ')' && (tempNum.find('/') < tempNum.length() || tempNum.find('*') < tempNum.length()))
-        {
-            bracketed--;
-        }
-
-        if ((inputEquation[i + 1] == '-' || current_index == '+' || current_index == ')' || i + 1 == inputEquation.size()) && tempNum != "")
-        {
-            equationQueue.push(tempNum);
-            tempNum = "";
-            decimal = 0;
-        }
-
-        if (current_index == ')')
-        {
-            equationQueue.push(")");
-            bracketed--;
+            if (!(tempNum == ""))
+            {
+                equationQueue.push(tempNum);
+                tempNum = "";
+            }
+        } 
+        else if (inputEquation.front() == ')') 
+        {   
+            if (!(tempNum == ""))
+            {
+                equationQueue.push(tempNum);
+                tempNum = "";
+            }
+            
+            tempSymbol += inputEquation.front();
+            equationQueue.push(tempSymbol);
+            inputEquation.erase (inputEquation.begin());
+            tempSymbol = "";
         }
     }
-
-    for (int i = 0; i < bracketed; i++)
-    {
-        equationQueue.push(")");
-    }
-    printConversion();
 }
 
-// For testing purpose
-void Calculator::printConversion()
+void Calculator::exponent()
 {
-    queue<string> printQ = equationQueue;
-    while (!printQ.empty())
-    {
-        cout << printQ.front() << " ";
-        printQ.pop();
-    }
-}
+    string Num1, Num2, tempResult;
+    queue<string> tempEquation;
 
-// Calculate bracket recursive
-double Calculator::calculate()
-{
-    double result;
     while (!equationQueue.empty())
-    {
-        string first_number = equationQueue.front();
-        equationQueue.pop();
-        // case 1: finds an open bracket
-        if (first_number == "(")
+    {   
+        Num1 += equationQueue.front();
+        equationQueue.pop(); //delete Num1 from queue
+
+        if (equationQueue.front() == "^")
         {
-            result += calculate();
+            equationQueue.pop();
+            tempResult += to_string(pow(stod(Num1), stod(equationQueue.front())));
+            equationQueue.pop();
+            tempEquation.push(tempResult);
+            tempResult = "";
+            Num1 = "";
         }
-        // case 2: finds a close bracket
-        else if (first_number == ")")
+        else if (Num1 == "V")
         {
-            return result;
+            Num1 = "";
+            tempResult += to_string(sqrt(stod(equationQueue.front())));
+            equationQueue.pop();
+            tempEquation.push(tempResult);
+            tempResult = "";
         }
-        // case 3: multiplication/divison of number
-        else if (first_number.find('/') < first_number.length() || first_number.find('*') < first_number.length())
-        {
-            if (first_number[0] == '/' || first_number[0] == '*')
-            {
-                string tempString = to_string(result);
-                // cout << tempString + first_number << endl;
-                result = multDiv(tempString + first_number);
-            }
-            else
-            {
-                result += multDiv(first_number);
-            }
-        }
-        //  case 4: trigonometry
-        else if (first_number == "sin" || first_number == "cos" || first_number == "tan")
-        {
-            result += trigonometric(first_number);
-        }
-        //  base case: addition of number
         else
         {
-            result += stod(first_number);
-        }
+            tempEquation.push(Num1);
+            Num1 = "";
+        }   
     }
-    return result;
+
+    while (!tempEquation.empty()) 
+    {
+        equationQueue.push(tempEquation.front());
+        tempEquation.pop();
+    }
+    
+    // while (!equationQueue.empty())
+    // {
+    //     cout << equationQueue.front() << "|";
+    //     equationQueue.pop();
+    // }
+    
 }
 
-double Calculator::multDiv(string equation)
+void Calculator::logarithmic()
 {
-    string tempNum = "";
-    queue<string> tempResult;
-    for (int i = 0; i < equation.size(); i++)
+    queue<string> tempEquation;
+
+    while (!equationQueue.empty())
     {
-        if (isdigit(equation[i]) || equation[i] == '.')
+        string tempNum = ""; 
+        double num;
+        
+        if (equationQueue.front() == "log" || equationQueue.front() == "ln") 
         {
-            tempNum += equation[i];
-        }
+            string base = "";
+            
+            if (equationQueue.front() == "log") 
+            {
+                equationQueue.pop();
+                if (equationQueue.front() == "(")
+                {
+                    equationQueue.pop();
+                    tempNum = to_string(log10(stod(equationQueue.front())));
+                    tempEquation.push(tempNum);
+                }
+                else if (isNumber(equationQueue.front()))
+                {
+                    base += equationQueue.front();
+                    equationQueue.pop();
+                    equationQueue.pop();
+                    tempNum = to_string(log(stod(equationQueue.front())) / log(stod(base)));
+                    tempEquation.push(tempNum);
+                }
+            }
+            else if (equationQueue.front() == "ln")
+            {
+                equationQueue.pop();
+                equationQueue.pop();
+                tempNum = to_string(log(stod(equationQueue.front())));
+                tempEquation.push(tempNum);
+            }
 
-        if (equation[i] == '/' || equation[i] == '*')
-        {
-            tempResult.push(tempNum);
-            tempNum = "";
-            string temp(1, equation[i]);
-            tempResult.push(temp);
+            equationQueue.pop();
+            equationQueue.pop();
         }
-
-        if (tempNum != "" && i + 1 == equation.size())
+        else
         {
-            tempResult.push(tempNum);
-            tempNum = "";
+            tempEquation.push(equationQueue.front());
+            equationQueue.pop();
         }
     }
 
-    double result;
-    result = stod(tempResult.front());
-    tempResult.pop();
-    while (!tempResult.empty())
+    while (!tempEquation.empty()) 
     {
-        if (tempResult.front() == "/")
-        {
-            tempResult.pop();
-            result /= stod(tempResult.front());
-        }
-        else if (tempResult.front() == "*")
-        {
-            tempResult.pop();
-            result *= stod(tempResult.front());
-        }
-        tempResult.pop();
+        equationQueue.push(tempEquation.front());
+        tempEquation.pop();
     }
-    return result;
 }
+
+void Calculator::trigonometric() 
+{
+    queue<string> tempEquation;
+
+    while (!equationQueue.empty())
+    {
+        string tempNum = ""; 
+        double num;
+        
+        if (equationQueue.front() == "sin") 
+        {
+            equationQueue.pop();
+            num = stod(equationQueue.front())*3.14159/180;
+            tempNum = to_string(sin(num));
+            tempEquation.push(tempNum);
+        }
+        else if (equationQueue.front() == "cos")
+        {
+            equationQueue.pop();
+            num = stod(equationQueue.front())*3.14159/180;
+            tempNum = to_string(cos(num));
+            tempEquation.push(tempNum);
+        }
+        else if (equationQueue.front() == "tan")
+        {
+            equationQueue.pop();
+            num = stod(equationQueue.front())*3.14159/180;
+            tempNum = to_string(tan(num));
+            tempEquation.push(tempNum);
+        }
+        else 
+        {
+        tempEquation.push(equationQueue.front());
+        }
+
+        equationQueue.pop();
+    }
+
+    while (!tempEquation.empty()) 
+    {
+        equationQueue.push(tempEquation.front());
+        tempEquation.pop();
+    }
+    
+    // return equationQueue;
+}
+
+void Calculator::printConversion() {
+
+    // logarithmic();
+    // trigonometric();
+    exponent();   
+    cout << equationQueue.size() << "\n";
+
+    while (!equationQueue.empty()) {
+        cout << equationQueue.front();
+        cout  << "|";
+        equationQueue.pop();
+    }
+}
+
+double Calculator::calculate() {
+
+    logarithmic();
+    // trigonometric();
+    // exponent();
+
+    while (!equationQueue.empty()) {
+        finalResult += stod(equationQueue.front());
+        equationQueue.pop();
+    }
+
+    return finalResult;
+}
+
 #endif
